@@ -35,12 +35,14 @@ public class PolygonPositioner : MonoBehaviour
 		transform.position = new Vector3(voxel_cube.position.x + Random.Range(-0.3f, 0.3f), voxel_cube.position.y + Random.Range(0.1f, 0.3f), voxel_cube.position.z + Random.Range(0.1f, 0.3f));
 		transform.rotation = Quaternion.Euler(new Vector3(voxel_cube.rotation.eulerAngles.x + Random.Range(-10.0f, 10.0f), voxel_cube.rotation.eulerAngles.y + Random.Range(-30.0f, 30.0f), voxel_cube.rotation.eulerAngles.z + Random.Range(-10.0f, 10.0f)));
 
+		this.GetComponent<Rigidbody>().velocity = new Vector3();
+		this.GetComponent<Rigidbody>().angularVelocity = new Vector3();
 		this.GetComponent<Rigidbody>().isKinematic = false;
-	
+
 		// enable copy objects
-//		copy_objects[current_object_id] = GameObject.Instantiate(this.gameObject);
-//		copy_objects[current_object_id].GetComponent<PolygonPositioner>().enabled = false;
-//		copy_objects[current_object_id].GetComponent<Rigidbody>().isKinematic = false;
+		//		copy_objects[current_object_id] = GameObject.Instantiate(this.gameObject);
+		//		copy_objects[current_object_id].GetComponent<PolygonPositioner>().enabled = false;
+		//		copy_objects[current_object_id].GetComponent<Rigidbody>().isKinematic = false;
 
 		// disable my own component
 		//		this.enabled = false;
