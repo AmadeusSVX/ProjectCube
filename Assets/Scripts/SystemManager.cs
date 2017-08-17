@@ -1,0 +1,104 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public enum AppMode
+{
+	PositioningMode,
+	ScanMode,
+	PolygonizeMode,
+	PhysicsMode
+}
+
+public class SystemManager : MonoBehaviour {
+
+	public AppMode current_mode = AppMode.PositioningMode;
+	public TangoColorizePointCloud tango_point_cloud = null;
+	public GameObject positioning_mode_button = null;
+	public GameObject polygonize_mode_button = null;
+	
+	public GameObject voxel_cube;
+	public GameObject polygon_cube;
+
+	public TextMesh mode_display;
+
+
+	// Use this for initialization
+	void Start () {
+		current_mode = AppMode.PositioningMode;	
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		if(current_mode == AppMode.PositioningMode)
+		{
+			positioning_mode_button.SetActive(false);
+			polygonize_mode_button.SetActive(false);
+
+//			photo_capture.is_enable = false;
+			polygon_cube.SetActive(false);
+
+			mode_display.text = "POSITIONING MODE";
+		
+			if(!voxel_cube.GetComponent<CubePositioner>().enabled){	current_mode = AppMode.ScanMode;	}
+		}
+		else if(current_mode == AppMode.ScanMode)
+		{
+			positioning_mode_button.SetActive(true);
+			polygonize_mode_button.SetActive(true);
+
+			polygon_cube.SetActive(false);
+
+			voxel_cube.GetComponent<VoxelProcessor>().SetVertices(tango_point_cloud.m_nrPoints.ToArray(), tango_point_cloud.m_nrColor.ToArray());
+//			voxel_cube.GetComponent<VoxelProcessor>().SetVertices(tango_point_cloud.m_points, tango_point_cloud.m_pointColor.ToArray());
+
+			mode_display.text = "SCAN MODE";
+		}
+		else if(current_mode == AppMode.PolygonizeMode)
+		{
+			positioning_mode_button.SetActive(true);
+			polygonize_mode_button.SetActive(false);
+
+//			photo_capture.is_enable = false;
+
+			polygon_cube.SetActive(true);
+
+			mode_display.text = "POLYGONIZE MODE";
+
+			if (!polygon_cube.GetComponent<PolygonPositioner>().enabled) { current_mode = AppMode.PhysicsMode; }
+		}
+		else if(current_mode == AppMode.PhysicsMode)
+		{
+			positioning_mode_button.SetActive(true);
+			polygonize_mode_button.SetActive(false);
+
+//			photo_capture.is_enable = false;
+
+			polygon_cube.SetActive(true);
+
+			mode_display.text = "PHYSICS MODE";
+		}
+	}
+
+	public void OnClickPositioningMode()
+	{
+//		photo_capture.photo_counter = 0;
+		current_mode = AppMode.PositioningMode;
+		voxel_cube.GetComponent<CubePositioner>().enabled = true;
+		voxel_cube.GetComponent<VoxelProcessor>().ClearVoxel();
+	}
+
+	public void OnClickPolygonizeMode()
+	{
+//		photo_capture.photo_counter = 0;
+		polygon_cube.SetActive(true);
+		polygon_cube.transform.SetPositionAndRotation(voxel_cube.transform.position, voxel_cube.transform.rotation);
+		polygon_cube.GetComponent<PolygonPositioner>().enabled = true;
+
+		polygon_cube.GetComponent<Rigidbody>().isKinematic = true;
+//		voxel_cube.GetComponent<VoxelProcessor>().NoiseReduction();
+		voxel_cube.GetComponent<VoxelProcessor>().SetVoxel();
+
+		current_mode = AppMode.PolygonizeMode;
+	}
+}
