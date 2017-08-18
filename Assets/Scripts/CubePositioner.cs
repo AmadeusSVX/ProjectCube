@@ -18,11 +18,11 @@ public class CubePositioner : MonoBehaviour {
 //		Vector3 localDelta = Camera.current.transform.InverseTransformVector(cumulativeDelta);
 		Vector3 localDelta = cumulativeDelta;
 
-		transform.localScale = current_scale * (1.0f + localDelta.x);
-		if (transform.localScale.x < 0.1f) { transform.localScale = Vector3.one * 0.1f; }
+		transform.localScale = current_scale * (1.0f + localDelta.x * 3.0f);
+		if (transform.localScale.x < 0.08f) { transform.localScale = Vector3.one * 0.08f; }
 		if (transform.localScale.x > 2.0f) { transform.localScale = Vector3.one * 2.0f; }
 
-		dummy_cube.transform.localPosition = new Vector3(current_position.x, current_position.y, current_position.z + localDelta.y);
+		dummy_cube.transform.localPosition = new Vector3(current_position.x, current_position.y, current_position.z + localDelta.y * 3.0f);
 
 		Debug.Log("localDelta" + localDelta);
 		Debug.Log("Scale:" + transform.localScale.x);
