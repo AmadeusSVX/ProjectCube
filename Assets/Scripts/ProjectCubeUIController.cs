@@ -223,6 +223,8 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 #pragma warning restore 618
 			}
 		}
+
+
 	}
 
 	/// <summary>
