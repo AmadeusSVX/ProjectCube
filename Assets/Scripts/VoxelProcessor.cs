@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class VoxelProcessor : MonoBehaviour {
@@ -13,56 +14,26 @@ public class VoxelProcessor : MonoBehaviour {
 	private List<Color32>	mesh_colors;
 	private List<int> mesh_indices;
 
-//	private Texture3D density_texture;
 	private Color32[] colors;
+
+	// thread related function
+	private Thread voxel_thread;
+	private bool is_thread = false;
+	private bool is_process = false;
+	private bool is_update = false;
 
 	// need to be multithreading
 	public void SetVoxel()
 	{
-		NoiseReduction2();
-//		density_texture.SetPixels32(colors);
-//		density_texture.Apply();
-
-		marching_cube.SetVoxels(colors, ref mesh_vertices, ref mesh_colors, ref mesh_indices);
-
+		// disable rendering while processing
 		for (int i = 0; i < mesh_filters.Length; i++)
 		{
 			mesh_filters[i].GetComponent<Renderer>().enabled = false;
-			mesh_filters[i].mesh.triangles = null;
-			mesh_filters[i].mesh.vertices = null;
-			mesh_filters[i].mesh.colors32 = null;
+			mesh_filters[i].mesh.Clear();
 		}
 
-		int current_index = 0;
-
-		for (int i=0; i<mesh_filters.Length; i++)
-		{
-			if(mesh_vertices.Count - current_index > 60000)
-			{
-				Debug.Log("Mode 1 Index:" + i + " from:" + current_index + " to:" + current_index + 60000);
-				mesh_filters[i].mesh.vertices = mesh_vertices.GetRange(current_index, 60000).ToArray();
-				mesh_filters[i].mesh.colors32 = mesh_colors.GetRange(current_index, 60000).ToArray();
-				mesh_indices.Clear();
-				for(int j=0; j<60000; j++) { mesh_indices.Add(j); }
-				mesh_filters[i].mesh.triangles = mesh_indices.ToArray();
-
-				mesh_filters[i].GetComponent<Renderer>().enabled = true;
-				current_index += 60000;
-			}
-			else
-			{
-				Debug.Log("Mode 2 Index:" + i + " from:" + current_index + " to:" + (mesh_vertices.Count - current_index));
-				mesh_filters[i].mesh.vertices = mesh_vertices.GetRange(current_index, mesh_vertices.Count - current_index).ToArray();
-				mesh_filters[i].mesh.colors32 = mesh_colors.GetRange(current_index, mesh_vertices.Count - current_index).ToArray();
-				mesh_indices.Clear();
-				for (int j = 0; j < mesh_vertices.Count - current_index; j++) { mesh_indices.Add(j); }
-				mesh_filters[i].mesh.triangles = mesh_indices.ToArray();
-
-				mesh_filters[i].GetComponent<Renderer>().enabled = true;
-				current_index += mesh_vertices.Count;
-				break;
-			}
-		}
+		// start processing on thread
+		is_process = true;
 	}
 
 	public void ClearVoxel()
@@ -129,6 +100,8 @@ public class VoxelProcessor : MonoBehaviour {
 
 	public void SetVertices(Vector3[] in_vertices, Color32[] in_colors)
 	{
+		if(is_process) { return; }
+
 		for(int i=0; i<in_vertices.Length; i++)
 		{
 			Vector3 local_vertex = transform.InverseTransformPoint(in_vertices[i]) + Vector3.one * 0.5f;
@@ -169,11 +142,76 @@ public class VoxelProcessor : MonoBehaviour {
 		mesh_vertices = new List<Vector3>();
 		mesh_colors = new List<Color32>();
 		mesh_indices = new List<int>();
+
+
+		is_process = false;
+		is_update = false;
+		is_thread = true;
+		voxel_thread = new Thread(VoxelThread);
+		voxel_thread.Start();
 	}
 
 	// Update is called once per frame
 	void OnDisable() 
 	{
+		is_thread = false;
+		voxel_thread.Join();
 		// no need to texture release?
+	}
+
+	private void Update()
+	{
+		if(!is_process && is_update)
+		{
+			int current_index = 0;
+
+			for (int i = 0; i < mesh_filters.Length; i++)
+			{
+				if (mesh_vertices.Count - current_index > 60000)
+				{
+					Debug.Log("Mode 1 Index:" + i + " from:" + current_index + " to:" + current_index + 60000);
+					mesh_filters[i].mesh.vertices = mesh_vertices.GetRange(current_index, 60000).ToArray();
+					mesh_filters[i].mesh.colors32 = mesh_colors.GetRange(current_index, 60000).ToArray();
+					mesh_indices.Clear();
+					for (int j = 0; j < 60000; j++) { mesh_indices.Add(j); }
+					mesh_filters[i].mesh.triangles = mesh_indices.ToArray();
+
+					mesh_filters[i].GetComponent<Renderer>().enabled = true;
+					current_index += 60000;
+				}
+				else
+				{
+					Debug.Log("Mode 2 Index:" + i + " from:" + current_index + " to:" + (mesh_vertices.Count - current_index));
+					mesh_filters[i].mesh.vertices = mesh_vertices.GetRange(current_index, mesh_vertices.Count - current_index).ToArray();
+					mesh_filters[i].mesh.colors32 = mesh_colors.GetRange(current_index, mesh_vertices.Count - current_index).ToArray();
+					mesh_indices.Clear();
+					for (int j = 0; j < mesh_vertices.Count - current_index; j++) { mesh_indices.Add(j); }
+					mesh_filters[i].mesh.triangles = mesh_indices.ToArray();
+
+					mesh_filters[i].GetComponent<Renderer>().enabled = true;
+					current_index += mesh_vertices.Count;
+					break;
+				}
+			}
+
+			is_update = false;
+		}
+	}
+
+	private void VoxelThread()
+	{ 
+		while(is_thread)
+		{
+			if(!is_process) 
+			{
+				Thread.Sleep(10);
+				continue;
+			}
+
+			NoiseReduction2();
+			marching_cube.SetVoxels(colors, ref mesh_vertices, ref mesh_colors, ref mesh_indices);
+			is_update = true;
+			is_process = false;
+		}
 	}
 }
