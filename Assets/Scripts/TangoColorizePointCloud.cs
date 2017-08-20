@@ -187,6 +187,7 @@ public class TangoColorizePointCloud : MonoBehaviour, ITangoPointCloud
 	/// </summary>
 	public void Start()
 	{
+		Debug.Log("Point Cloud Registering");
 		m_tangoApplication = FindObjectOfType<TangoApplication>();
 		m_tangoApplication.Register(this);
 
@@ -223,6 +224,7 @@ public class TangoColorizePointCloud : MonoBehaviour, ITangoPointCloud
 	/// <param name="pointCloud">Depth information from Tango.</param>
 	public void OnTangoPointCloudAvailable(TangoPointCloudData pointCloud)
 	{
+		Debug.Log("OnTangoPointCloudAvailable");
 		m_mostRecentPointCloud = pointCloud;
 
 		// Calculate the time since the last successful depth data

@@ -208,6 +208,7 @@ public class TangoPointCloud : MonoBehaviour, ITangoPointCloud
     /// <param name="pointCloud">Depth information from Tango.</param>
     public void OnTangoPointCloudAvailable(TangoPointCloudData pointCloud)
     {
+		Debug.Log("OnPointCloud");
         m_mostRecentPointCloud = pointCloud;
 
         // Calculate the time since the last successful depth data

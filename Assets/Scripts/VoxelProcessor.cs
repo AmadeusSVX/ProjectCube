@@ -25,6 +25,7 @@ public class VoxelProcessor : MonoBehaviour {
 	// need to be multithreading
 	public void SetVoxel()
 	{
+		return;
 		// disable rendering while processing
 		for (int i = 0; i < mesh_filters.Length; i++)
 		{

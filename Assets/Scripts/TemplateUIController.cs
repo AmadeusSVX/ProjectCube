@@ -28,36 +28,19 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public enum ScannerMode
-{
-	OffMode,
-	PositioningMode,
-	ScanMode,
-	PolygonizeMode,
-	PhysicsMode
-}
-
 /// <summary>
 /// Occlusion test controller.
 /// </summary>
-public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPose
+public class TemplateUIController : MonoBehaviour, ITangoLifecycle, ITangoPose
 {
 	/// <summary>
 	/// The object that is used to test occlusion.
 	/// </summary>
-	//---------------------------------------------
+	//	[Header("Marker Objects")]
+	//	public GameObject m_markerObject;
 
-	public ScannerMode current_mode = ScannerMode.PositioningMode;
-	public TangoColorizePointCloud tango_point_cloud = null;
+	public GameObject m_pointCloud;
 
-	public GameObject positioning_mode_button = null;
-	public GameObject polygonize_mode_button = null;
-
-	public GameObject voxel_cube;
-	public GameObject polygon_cube;
-
-	//---------------------------------------------
-	public TextMesh mode_display;
 	/// <summary>
 	/// The canvas panel used during mesh construction.
 	/// </summary>
@@ -243,54 +226,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 			}
 		}
 
-		if (current_mode == ScannerMode.OffMode)
-		{
-			positioning_mode_button.SetActive(false);
-			polygonize_mode_button.SetActive(false);
 
-			voxel_cube.SetActive(false);
-			polygon_cube.SetActive(false);
-
-			mode_display.text = "SCANNER OFF";
-
-			if (!voxel_cube.GetComponent<CubePositioner>().enabled) { current_mode = ScannerMode.ScanMode; }
-		}
-		else if (current_mode == ScannerMode.PositioningMode)
-		{
-			positioning_mode_button.SetActive(false);
-			polygonize_mode_button.SetActive(false);
-
-			voxel_cube.SetActive(true);
-			polygon_cube.SetActive(false);
-
-			mode_display.text = "POSITIONING MODE";
-
-			if (!voxel_cube.GetComponent<CubePositioner>().enabled) { current_mode = ScannerMode.ScanMode; }
-		}
-		else if (current_mode == ScannerMode.ScanMode)
-		{
-			positioning_mode_button.SetActive(true);
-			polygonize_mode_button.SetActive(true);
-
-			voxel_cube.SetActive(true);
-			polygon_cube.SetActive(false);
-
-			voxel_cube.GetComponent<VoxelProcessor>().SetVertices(tango_point_cloud.m_nrPoints.ToArray(), tango_point_cloud.m_nrColor.ToArray());
-
-			mode_display.text = "SCAN MODE";
-		}
-		else if (current_mode == ScannerMode.PolygonizeMode)
-		{
-			positioning_mode_button.SetActive(true);
-			polygonize_mode_button.SetActive(false);
-
-			voxel_cube.SetActive(true);
-			polygon_cube.SetActive(true);
-
-			mode_display.text = "POLYGONIZE MODE";
-
-			if (!polygon_cube.GetComponent<PolygonPositioner>().enabled) { current_mode = ScannerMode.PhysicsMode; }
-		}
 	}
 
 	/// <summary>
@@ -499,9 +435,6 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		m_curAreaDescription = AreaDescription.ForUUID(m_savedUUID);
 
 		m_tangoApplication.Startup(m_curAreaDescription);
-
-		// Scanner switch on
-		OnSwitch(true);
 	}
 
 	/// <summary>
@@ -561,41 +494,6 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		Debug.Log("Drag:" + pdata.position);
 	}
 
-	public void OnClickPositioningMode()
-	{
-		current_mode = ScannerMode.PositioningMode;
-		voxel_cube.GetComponent<CubePositioner>().enabled = true;
-		voxel_cube.GetComponent<VoxelProcessor>().ClearVoxel();
-	}
-
-	public void OnClickPolygonizeMode()
-	{
-		polygon_cube.SetActive(true);
-		polygon_cube.transform.SetPositionAndRotation(voxel_cube.transform.position, voxel_cube.transform.rotation);
-		polygon_cube.GetComponent<PolygonPositioner>().enabled = true;
-
-		polygon_cube.GetComponent<Rigidbody>().isKinematic = true;
-		voxel_cube.GetComponent<VoxelProcessor>().SetVoxel();
-
-		current_mode = ScannerMode.PolygonizeMode;
-	}
-
-	public void OnSwitch(bool is_on)
-	{
-		if (is_on)
-		{
-			Debug.Log("Activate positioning mode");
-			tango_point_cloud.enabled = true;
-			current_mode = ScannerMode.PositioningMode;
-		}
-		else
-		{
-			OnClickPositioningMode();
-			current_mode = ScannerMode.OffMode;
-			tango_point_cloud.enabled = false;
-		}
-	}
-
 	/// <summary>
 	/// Show the mesh as visible.
 	/// </summary>
@@ -626,9 +524,6 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 #pragma warning disable 618
 		Application.LoadLevel(Application.loadedLevel);
 #pragma warning restore 618
-		
-		// Scanner switch off
-		OnSwitch(false);
 	}
 
 	/// <summary>

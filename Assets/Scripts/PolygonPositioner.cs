@@ -32,7 +32,7 @@ public class PolygonPositioner : MonoBehaviour
 
 		// here to duplicate objects
 
-		transform.position = new Vector3(voxel_cube.position.x + Random.Range(-0.3f, 0.3f), voxel_cube.position.y + Random.Range(0.1f, 0.3f), voxel_cube.position.z + Random.Range(0.1f, 0.3f));
+		transform.position = new Vector3(voxel_cube.position.x + Random.Range(-0.2f, 0.2f), voxel_cube.position.y + Random.Range(0.1f, 0.2f), voxel_cube.position.z + Random.Range(0.1f, 0.3f));
 		transform.rotation = Quaternion.Euler(new Vector3(voxel_cube.rotation.eulerAngles.x + Random.Range(-10.0f, 10.0f), voxel_cube.rotation.eulerAngles.y + Random.Range(-30.0f, 30.0f), voxel_cube.rotation.eulerAngles.z + Random.Range(-10.0f, 10.0f)));
 
 		this.GetComponent<Rigidbody>().velocity = new Vector3();
