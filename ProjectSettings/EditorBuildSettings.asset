@@ -51,5 +51,5 @@ EditorBuildSettings:
     path: Assets/TangoSDK/Examples/Scenes/ExperimentalFloorFinding.unity
     guid: 41d3b0f2be66c4f89938682fa7778923
   - enabled: 1
-    path: Assets/MapProjectCube.unity
-    guid: 1133dd12ca4cba74c99acb74e701aa08
+    path: Assets/PointCloudMod.unity
+    guid: 2b3a5f7cc666e56469dd191130e11a20
