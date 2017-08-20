@@ -570,11 +570,16 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 
 	public void OnClickPolygonizeMode()
 	{
+		Debug.Log("POLYGONIZE1");
 		polygon_cube.SetActive(true);
+		Debug.Log("POLYGONIZE2");
 		polygon_cube.transform.SetPositionAndRotation(voxel_cube.transform.position, voxel_cube.transform.rotation);
+		Debug.Log("POLYGONIZE3");
 		polygon_cube.GetComponent<PolygonPositioner>().enabled = true;
-
+		Debug.Log("POLYGONIZE4");
 		polygon_cube.GetComponent<Rigidbody>().isKinematic = true;
+		Debug.Log("POLYGONIZE5");
+
 		voxel_cube.GetComponent<VoxelProcessor>().SetVoxel();
 
 		current_mode = ScannerMode.PolygonizeMode;

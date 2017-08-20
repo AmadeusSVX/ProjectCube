@@ -116,8 +116,8 @@ public class NoiseReducer : MonoBehaviour
 
 		// 5. output texture for debug
 		CopyToTexture();
-		Debug.Log("Copying:" + out_vertices.Count + " / " + in_num_vertices);
-		Debug.Log("Zero:" + zero_counter);
+//		Debug.Log("Copying:" + out_vertices.Count + " / " + in_num_vertices);
+//		Debug.Log("Zero:" + zero_counter);
 	}
 
 
