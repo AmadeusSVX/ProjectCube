@@ -570,15 +570,10 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 
 	public void OnClickPolygonizeMode()
 	{
-		Debug.Log("POLYGONIZE1");
 		polygon_cube.SetActive(true);
-		Debug.Log("POLYGONIZE2");
 		polygon_cube.transform.SetPositionAndRotation(voxel_cube.transform.position, voxel_cube.transform.rotation);
-		Debug.Log("POLYGONIZE3");
 		polygon_cube.GetComponent<PolygonPositioner>().enabled = true;
-		Debug.Log("POLYGONIZE4");
 		polygon_cube.GetComponent<Rigidbody>().isKinematic = true;
-		Debug.Log("POLYGONIZE5");
 
 		voxel_cube.GetComponent<VoxelProcessor>().SetVoxel();
 
@@ -590,14 +585,14 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		if (is_on)
 		{
 			Debug.Log("Activate positioning mode");
-			tango_point_cloud.enabled = true;
+			tango_point_cloud.GetComponent<MeshRenderer>().enabled = true;
 			current_mode = ScannerMode.PositioningMode;
 		}
 		else
 		{
 			OnClickPositioningMode();
 			current_mode = ScannerMode.OffMode;
-			tango_point_cloud.enabled = false;
+			tango_point_cloud.GetComponent<MeshRenderer>().enabled = false;
 		}
 	}
 
@@ -617,7 +612,8 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 	/// </summary>
 	public void Button_HideMesh()
 	{
-		m_meshFromFile.GetComponent<MeshRenderer>().material = m_depthMaskMat;
+		m_meshFromFile.GetComponent<MeshRenderer>().enabled = false;			// rendering itself is disabled
+//		m_meshFromFile.GetComponent<MeshRenderer>().material = m_depthMaskMat;
 
 		m_viewMeshButton.SetActive(true);
 		m_hideMeshButton.SetActive(false);
