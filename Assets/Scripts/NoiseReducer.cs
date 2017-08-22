@@ -10,6 +10,7 @@ public class NoiseReducer : MonoBehaviour
 	public int image_height = 80;
 	public float diff_threshold = 0.02f;
 	public int num_threshold = 2;
+	public float modify_bias = 1.02f;
 
 	public Texture2D mask_texture;
 	private float[] max_image;
@@ -22,6 +23,7 @@ public class NoiseReducer : MonoBehaviour
 	private byte[] mask_image;
 	private byte[] mask_texture_image;
 
+	private List<Vector3> local_vertices;
 	private List<int> vertices_indices;
 
 	// Use this for initialization
@@ -49,6 +51,7 @@ public class NoiseReducer : MonoBehaviour
 		far_image.CopyTo(min_image, 0);
 		zero_image2.CopyTo(num_image, 0);
 
+		local_vertices = new List<Vector3>();
 		vertices_indices = new List<int>();
 	}
 
@@ -59,6 +62,7 @@ public class NoiseReducer : MonoBehaviour
 		far_image.CopyTo(min_image, 0);
 		out_vertices.Clear();
 		out_colors.Clear();
+		local_vertices.Clear();
 		zero_image2.CopyTo(num_image, 0);
 		int zero_counter = 0;
 
@@ -69,7 +73,8 @@ public class NoiseReducer : MonoBehaviour
 
 			// transform world from local
 			Vector3 local_vertex = current_mat.inverse.MultiplyPoint(in_vertices[i]);
-			//			Vector3 local_vertex = (current_mat.inverse * in_vertices[i]);
+			local_vertices.Add(local_vertex);
+
 			if (local_vertex.z == 0 || local_vertex.z > 10.0f)
 			{
 				vertices_indices.Add(-1);
@@ -109,7 +114,8 @@ public class NoiseReducer : MonoBehaviour
 			if(vertices_indices[i] < 0) { continue; }
 			if(mask_image[vertices_indices[i]] > 0) 
 			{
-				out_vertices.Add(in_vertices[i]);
+				out_vertices.Add(current_mat.MultiplyPoint(local_vertices[i] * modify_bias));
+//				out_vertices.Add(in_vertices[i]);
 				out_colors.Add(in_colors[i]);
 			}
 		}
