@@ -44,7 +44,7 @@ public class TangoColorizePointCloud : MonoBehaviour, ITangoPointCloud
 
 	public TangoColorBytes m_tangoColorBytes;
 	public Camera m_Camera;
-	public NoiseReducer3 m_noiseReducer;
+	public NoiseReducer m_noiseReducer;
 
 	/// <summary>
 	/// The points of the point cloud, in world space.
@@ -300,11 +300,11 @@ public class TangoColorizePointCloud : MonoBehaviour, ITangoPointCloud
 				EstimateDepthColor(m_Camera);
 
 				// noise reducer 1/2
-//				m_noiseReducer.ReduceNoise(m_pointsCount, m_points, m_pointColor, m_Camera.transform.localToWorldMatrix, ref m_nrPoints, ref m_nrColor);
+				m_noiseReducer.ReduceNoise(m_pointsCount, m_points, m_pointColor, m_Camera.transform.localToWorldMatrix, ref m_nrPoints, ref m_nrColor);
 
 				// noise reducer 3
-				m_noiseReducer.ComputeCoeffcient(m_pointsCount, m_points, m_pointColor, m_Camera.transform.localToWorldMatrix, ref m_nrPoints, ref m_nrColor);
-				m_noiseReducer.PlotDepthImage(m_pointsCount, m_points, m_Camera.transform.localToWorldMatrix);
+//				m_noiseReducer.ComputeCoeffcient(m_pointsCount, m_points, m_pointColor, m_Camera.transform.localToWorldMatrix, ref m_nrPoints, ref m_nrColor);
+//				m_noiseReducer.PlotDepthImage(m_pointsCount, m_points, m_Camera.transform.localToWorldMatrix);
 /*
 				// Need to update indices too!
 				int[] indices = new int[m_nrPoints.Count];

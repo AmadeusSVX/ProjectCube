@@ -45,7 +45,6 @@ public class NoiseReducer3 : MonoBehaviour
 		zero_image.CopyTo(depth_image, 0);
 		debug_mat = current_mat;
 
-
 		// 2. Plot previous point cloud
 		for (int i = 0; i < in_num_vertices; i++)
 		{
@@ -65,6 +64,9 @@ public class NoiseReducer3 : MonoBehaviour
 			if (depth_image[target_index] > 0) { depth_image[target_index] = depth_image[target_index] * 0.5f + local_vertex.z * 0.5f; }
 			else { depth_image[target_index] = local_vertex.z; }
 		}
+
+		// for debug
+		CopyToTexture();
 	}
 
 	public void ComputeCoeffcient(int in_num_vertices, Vector3[] in_vertices, List<Color32> in_colors, Matrix4x4 current_mat, ref List<Vector3> out_vertices, ref List<Color32> out_colors)
@@ -123,7 +125,7 @@ public class NoiseReducer3 : MonoBehaviour
 		depth_texture.Apply();
 
 		GetComponent<Renderer>().material.mainTexture = depth_texture;
-		Debug.Log("Coeff:" + correct_coeff);
-		Debug.Log("Mat:" + debug_mat);
+//		Debug.Log("Coeff:" + correct_coeff);
+//		Debug.Log("Mat:" + debug_mat);
 	}
 }

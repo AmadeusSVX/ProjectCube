@@ -55,9 +55,19 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 
 	public GameObject voxel_cube;
 	public GameObject polygon_cube;
+	public TextMesh mode_display;
+
+	// auto capture related objects
+	public Transform camera_transform;
+	public Transform cube_transform;
+	public float capture_angle_threshold = 10.0f;
+	public float next_angle_threshold = 80.0f;
+	private Vector3 capture_pos;
+	private Quaternion capture_rot;
+
+	bool is_capturing = false;
 
 	//---------------------------------------------
-	public TextMesh mode_display;
 	/// <summary>
 	/// The canvas panel used during mesh construction.
 	/// </summary>
@@ -218,6 +228,8 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 				m_tangoApplication.RequestPermissions();
 			}
 		}
+
+		is_capturing = false;
 	}
 
 	/// <summary>
@@ -254,6 +266,8 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 			mode_display.text = "SCANNER OFF";
 
 			if (!voxel_cube.GetComponent<CubePositioner>().enabled) { current_mode = ScannerMode.ScanMode; }
+
+			is_capturing = false;
 		}
 		else if (current_mode == ScannerMode.PositioningMode)
 		{
@@ -266,6 +280,10 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 			mode_display.text = "POSITIONING MODE";
 
 			if (!voxel_cube.GetComponent<CubePositioner>().enabled) { current_mode = ScannerMode.ScanMode; }
+
+			is_capturing = true;
+			capture_pos = camera_transform.transform.position;
+			capture_rot = camera_transform.transform.rotation;
 		}
 		else if (current_mode == ScannerMode.ScanMode)
 		{
@@ -275,7 +293,31 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 			voxel_cube.SetActive(true);
 			polygon_cube.SetActive(false);
 
-			voxel_cube.GetComponent<VoxelProcessor>().SetVertices(tango_point_cloud.m_nrPoints.ToArray(), tango_point_cloud.m_nrColor.ToArray());
+			Vector3 previous_vector = capture_pos - cube_transform.position;
+			Vector3 current_vector = camera_transform.position - cube_transform.position;
+			float relative_angle = Mathf.Rad2Deg * Mathf.Acos(Vector3.Dot(previous_vector.normalized, current_vector.normalized));
+
+			if (is_capturing)
+			{
+				voxel_cube.GetComponent<VoxelProcessor>().SetVertices(tango_point_cloud.m_nrPoints.ToArray(), tango_point_cloud.m_nrColor.ToArray());
+
+				if(relative_angle > capture_angle_threshold)
+				{
+					is_capturing = false;
+					capture_pos = camera_transform.position;
+				}
+			}
+			else
+			{
+				if(relative_angle > next_angle_threshold)
+				{
+					is_capturing = true;
+					capture_pos = camera_transform.position;
+				}
+			}
+
+			Debug.Log("Relative angle:" + relative_angle);
+			Debug.Log("Capturing:" + is_capturing);
 
 			mode_display.text = "SCAN MODE";
 		}
