@@ -7,6 +7,7 @@ public class VoxelProcessor : MonoBehaviour {
 
 	public int voxel_resolution = 64;
 	public int vertex_threshold = 10;
+	public int neighbor_threshold = 4;
 	public MeshFilter[] mesh_filters = null;
 
 	private MarchingCubesCPU marching_cube;
@@ -82,7 +83,7 @@ public class VoxelProcessor : MonoBehaviour {
 					if (colors[target_index - voxel_resolution * voxel_resolution - voxel_resolution].a != 0) { neighbor_counter++; }
 					if (colors[target_index - voxel_resolution * voxel_resolution - voxel_resolution - 1].a != 0) { neighbor_counter++; }
 
-					if(neighbor_counter < vertex_threshold) { colors[target_index] = new Color32(0, 0, 0, 0); }
+					if(neighbor_counter < neighbor_threshold) { colors[target_index] = new Color32(0, 0, 0, 0); }
 				}
 			}
 		}

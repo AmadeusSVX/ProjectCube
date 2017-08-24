@@ -9,10 +9,13 @@ public class NoiseReducer : MonoBehaviour
 	public int image_width = 44;
 	public int image_height = 80;
 	public float diff_threshold = 0.02f;
+	public float diff_threshold_bias = 0.1f;
 	public int num_threshold = 2;
 	public float modify_bias = 1.02f;
 
 	public Texture2D mask_texture;
+	public Transform voxel_transform;
+
 	private float[] max_image;
 	private float[] min_image;
 	private int[] num_image;
@@ -65,6 +68,8 @@ public class NoiseReducer : MonoBehaviour
 		local_vertices.Clear();
 		zero_image2.CopyTo(num_image, 0);
 		int zero_counter = 0;
+
+		diff_threshold = voxel_transform.localScale.x * diff_threshold_bias;
 
 		// 2. Plot max and min point cloud
 		for (int i = 0; i < in_num_vertices; i++)

@@ -53,6 +53,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/TemplatePointCloud.unity
     guid: 1dfecc7efacbcd847ad53530725ba67e
-  - enabled: 1
+  - enabled: 0
     path: Assets/MapProjectCube2.unity
     guid: 3e0e68cf99958b643ad58e980fd74ec4
+  - enabled: 1
+    path: Assets/MapProjectCube3.unity
+    guid: d55075be0f1b6154ea08ea1c4194fe8f
