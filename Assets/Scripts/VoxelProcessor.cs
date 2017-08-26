@@ -9,6 +9,7 @@ public class VoxelProcessor : MonoBehaviour {
 	public int vertex_threshold = 10;
 	public int neighbor_threshold = 4;
 	public MeshFilter[] mesh_filters = null;
+	public InfoOutput info_output;
 
 	private MarchingCubesCPU marching_cube;
 	private List<Vector3>	mesh_vertices;
@@ -170,7 +171,7 @@ public class VoxelProcessor : MonoBehaviour {
 			{
 				if (mesh_vertices.Count - current_index > 60000)
 				{
-					Debug.Log("Mode 1 Index:" + i + " from:" + current_index + " to:" + current_index + 60000);
+					Debug.Log("Mode 1 Index:" + i + " from:" + current_index + " to:" + (current_index + 60000).ToString());
 					mesh_filters[i].mesh.vertices = mesh_vertices.GetRange(current_index, 60000).ToArray();
 					mesh_filters[i].mesh.colors32 = mesh_colors.GetRange(current_index, 60000).ToArray();
 					mesh_indices.Clear();
@@ -182,7 +183,7 @@ public class VoxelProcessor : MonoBehaviour {
 				}
 				else
 				{
-					Debug.Log("Mode 2 Index:" + i + " from:" + current_index + " to:" + (mesh_vertices.Count - current_index));
+					Debug.Log("Mode 2 Index:" + i + " from:" + current_index + " to:" + mesh_vertices.Count.ToString());
 					mesh_filters[i].mesh.vertices = mesh_vertices.GetRange(current_index, mesh_vertices.Count - current_index).ToArray();
 					mesh_filters[i].mesh.colors32 = mesh_colors.GetRange(current_index, mesh_vertices.Count - current_index).ToArray();
 					mesh_indices.Clear();
@@ -194,6 +195,8 @@ public class VoxelProcessor : MonoBehaviour {
 					break;
 				}
 			}
+
+			info_output.info_text = "Processed Marching Cube: " + mesh_vertices.Count + " vertices";
 
 			is_update = false;
 		}

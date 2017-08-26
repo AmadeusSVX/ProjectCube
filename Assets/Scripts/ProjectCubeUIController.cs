@@ -53,15 +53,18 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 	public GameObject positioning_mode_button = null;
 	public GameObject polygonize_mode_button = null;
 
+	public MeshRenderer noise_reduce_renderer = null;
+
 	public GameObject voxel_cube;
 	public GameObject polygon_cube;
 	public TextMesh mode_display;
+	public InfoOutput info_output;
 
 	// auto capture related objects
 	public Transform camera_transform;
 	public Transform cube_transform;
-	public float capture_angle_threshold = 10.0f;
-	public float next_angle_threshold = 80.0f;
+	public float capture_angle_threshold = 15.0f;
+	public float next_angle_threshold = 60.0f;
 	private Vector3 capture_pos;
 	private Quaternion capture_rot;
 
@@ -268,6 +271,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 			if (!voxel_cube.GetComponent<CubePositioner>().enabled) { current_mode = ScannerMode.ScanMode; }
 
 			is_capturing = false;
+			noise_reduce_renderer.enabled = false;
 		}
 		else if (current_mode == ScannerMode.PositioningMode)
 		{
@@ -282,6 +286,8 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 			if (!voxel_cube.GetComponent<CubePositioner>().enabled) { current_mode = ScannerMode.ScanMode; }
 
 			is_capturing = true;
+			noise_reduce_renderer.enabled = false;
+
 			capture_pos = camera_transform.transform.position;
 			capture_rot = camera_transform.transform.rotation;
 		}
@@ -299,6 +305,8 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 
 			if (is_capturing)
 			{
+				info_output.info_text = "Capture limit:" + (capture_angle_threshold - relative_angle).ToString("F1") + " deg";
+
 				voxel_cube.GetComponent<VoxelProcessor>().SetVertices(tango_point_cloud.m_nrPoints.ToArray(), tango_point_cloud.m_nrColor.ToArray());
 
 				if(relative_angle > capture_angle_threshold)
@@ -309,12 +317,16 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 			}
 			else
 			{
-				if(relative_angle > next_angle_threshold)
+				info_output.info_text = "Next capture angle:" + (next_angle_threshold - relative_angle).ToString("F1") + " deg";
+
+				if (relative_angle > next_angle_threshold)
 				{
 					is_capturing = true;
 					capture_pos = camera_transform.position;
 				}
 			}
+
+			noise_reduce_renderer.enabled = true;
 
 			Debug.Log("Relative angle:" + relative_angle);
 			Debug.Log("Capturing:" + is_capturing);
@@ -330,6 +342,8 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 			polygon_cube.SetActive(true);
 
 			mode_display.text = "POLYGONIZE MODE";
+
+			noise_reduce_renderer.enabled = false;
 
 			if (!polygon_cube.GetComponent<PolygonPositioner>().enabled) { current_mode = ScannerMode.PhysicsMode; }
 		}
@@ -536,6 +550,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		mr.material = m_depthMaskMat;
 		m_meshFromFile.AddComponent<MeshCollider>();
 		m_meshFromFile.layer = LayerMask.NameToLayer("Occlusion");
+		m_meshFromFile.GetComponent<MeshRenderer>().enabled = false;	// default false
 
 		// Load Area Description file.
 		m_curAreaDescription = AreaDescription.ForUUID(m_savedUUID);
@@ -643,6 +658,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 	/// </summary>
 	public void Button_ViewMesh()
 	{
+		m_meshFromFile.GetComponent<MeshRenderer>().enabled = true;            // rendering itself is disabled
 		m_meshFromFile.GetComponent<MeshRenderer>().material = m_visibleMat;
 
 		m_viewMeshButton.SetActive(false);

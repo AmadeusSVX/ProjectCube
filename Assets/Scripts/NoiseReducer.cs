@@ -32,7 +32,12 @@ public class NoiseReducer : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		mask_texture = new Texture2D(image_width, image_height, TextureFormat.RGB24, false);
+		mask_texture = new Texture2D(image_width, image_height, TextureFormat.RGBA32, false);
+		mask_texture.filterMode = FilterMode.Point;
+
+		transform.localScale = new Vector3(image_width / focal_length * transform.localPosition.z,
+										   image_height / focal_length * transform.localPosition.z,
+										   0.1f);
 
 		max_image = new float[image_width * image_height];
 		min_image = new float[image_width * image_height];
@@ -43,7 +48,7 @@ public class NoiseReducer : MonoBehaviour
 		zero_image2 = new int[image_width * image_height];
 
 		mask_image = new byte[image_width * image_height];
-		mask_texture_image = new byte[image_width * image_height * 3];
+		mask_texture_image = new byte[image_width * image_height * 4];
 
 		for (int i = 0; i < zero_image1.Length; i++) { zero_image1[i] = 0; }
 		for (int i = 0; i < zero_image2.Length; i++) { zero_image2[i] = 0; }
@@ -134,7 +139,7 @@ public class NoiseReducer : MonoBehaviour
 
 	public void CopyToTexture()
 	{
-		for (int i = 0; i < mask_image.Length; i++) { mask_texture_image[i * 3] = mask_image[i]; }
+		for (int i = 0; i < mask_image.Length; i++) { mask_texture_image[i * 4 + 1] = mask_image[i]; mask_texture_image[i * 4 + 3] = (byte)(mask_image[i] / 6); }
 
 		mask_texture.LoadRawTextureData(mask_texture_image);
 		mask_texture.Apply();
