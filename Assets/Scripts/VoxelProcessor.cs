@@ -30,7 +30,6 @@ public class VoxelProcessor : MonoBehaviour {
 		// disable rendering while processing
 		for (int i = 0; i < mesh_filters.Length; i++)
 		{
-			mesh_filters[i].GetComponent<Renderer>().enabled = false;
 			mesh_filters[i].mesh.Clear();
 		}
 
@@ -178,7 +177,7 @@ public class VoxelProcessor : MonoBehaviour {
 					for (int j = 0; j < 60000; j++) { mesh_indices.Add(j); }
 					mesh_filters[i].mesh.triangles = mesh_indices.ToArray();
 
-					mesh_filters[i].GetComponent<Renderer>().enabled = true;
+//					mesh_filters[i].GetComponent<Renderer>().enabled = true;
 					current_index += 60000;
 				}
 				else
@@ -190,7 +189,7 @@ public class VoxelProcessor : MonoBehaviour {
 					for (int j = 0; j < mesh_vertices.Count - current_index; j++) { mesh_indices.Add(j); }
 					mesh_filters[i].mesh.triangles = mesh_indices.ToArray();
 
-					mesh_filters[i].GetComponent<Renderer>().enabled = true;
+//					mesh_filters[i].GetComponent<Renderer>().enabled = true;
 					current_index += mesh_vertices.Count;
 					break;
 				}

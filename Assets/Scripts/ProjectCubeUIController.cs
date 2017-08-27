@@ -52,6 +52,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 
 	public GameObject positioning_mode_button = null;
 	public GameObject polygonize_mode_button = null;
+	public GameObject rescan_button = null;
 
 	public MeshRenderer noise_reduce_renderer = null;
 
@@ -262,6 +263,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		{
 			positioning_mode_button.SetActive(false);
 			polygonize_mode_button.SetActive(false);
+			rescan_button.SetActive(false);
 
 			voxel_cube.SetActive(false);
 			polygon_cube.SetActive(false);
@@ -277,6 +279,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		{
 			positioning_mode_button.SetActive(false);
 			polygonize_mode_button.SetActive(false);
+			rescan_button.SetActive(false);
 
 			voxel_cube.SetActive(true);
 			polygon_cube.SetActive(false);
@@ -295,6 +298,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		{
 			positioning_mode_button.SetActive(true);
 			polygonize_mode_button.SetActive(true);
+			rescan_button.SetActive(false);
 
 			voxel_cube.SetActive(true);
 			polygon_cube.SetActive(false);
@@ -337,6 +341,7 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		{
 			positioning_mode_button.SetActive(true);
 			polygonize_mode_button.SetActive(false);
+			rescan_button.SetActive(true);
 
 			voxel_cube.SetActive(true);
 			polygon_cube.SetActive(true);
@@ -617,6 +622,27 @@ public class ProjectCubeUIController : MonoBehaviour, ITangoLifecycle, ITangoPos
 		PointerEventData pdata = (PointerEventData)data;
 		Debug.Log("Drag:" + pdata.position);
 	}
+
+	public void OnClickRescan()
+	{
+		positioning_mode_button.SetActive(false);
+		polygonize_mode_button.SetActive(false);
+
+		voxel_cube.SetActive(true);
+		polygon_cube.SetActive(false);
+
+		mode_display.text = "POSITIONING MODE";
+
+		is_capturing = true;
+		noise_reduce_renderer.enabled = false;
+
+		capture_pos = camera_transform.transform.position;
+		capture_rot = camera_transform.transform.rotation;
+
+		voxel_cube.GetComponent<CubePositioner>().enabled = false;
+		current_mode = ScannerMode.ScanMode;
+	}
+
 
 	public void OnClickPositioningMode()
 	{

@@ -56,7 +56,7 @@ public class CubePositioner : MonoBehaviour {
 
 		if(current_touch == TouchInfo.Began) { tap_timer = 0.0f; begin_pos = touch_pos; OnManupulationStartEvent();  }
 		else if (current_touch == TouchInfo.Moved) { tap_timer += Time.deltaTime; OnManipulationEvent((touch_pos - begin_pos) * 0.0001f); }
-		else if (current_touch == TouchInfo.Ended) { if (tap_timer + Time.deltaTime < 0.1f) OnTapEvent(); }
+		else if (current_touch == TouchInfo.Ended) { if (tap_timer + Time.deltaTime < 0.2f) OnTapEvent(); }
 		else if(current_touch == TouchInfo.Stationary) { tap_timer += Time.deltaTime; }
 
 		transform.position = dummy_cube.transform.position;
