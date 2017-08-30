@@ -62,6 +62,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/MapProjectCube4.unity
     guid: 24970f519ac4595409d35cdd6e89f730
-  - enabled: 1
+  - enabled: 0
     path: Assets/MapProjectCube5.unity
     guid: ca1b3adeeebef824eae585df2f7e2f21
+  - enabled: 1
+    path: Assets/MapProjectCube6.unity
+    guid: e9f0c9df12680d944a2e2f15415d19ea
