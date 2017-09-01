@@ -22,7 +22,7 @@ public class CopyCube : MonoBehaviour {
 	{
 		for(int i=0; i< dst_mesh_filters.Length; i++)
 		{
-			dst_mesh_filters[i].mesh.Clear();
+			dst_mesh_filters[i].mesh = null;
 			dst_mesh_filters[i].mesh = Instantiate(src_mesh_filters[i].mesh);	// deep copy
 			dst_mesh_filters[i].GetComponent<MeshRenderer>().enabled = true;
 		}

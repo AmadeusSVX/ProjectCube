@@ -42,6 +42,15 @@ public class VoxelProcessor : MonoBehaviour {
 		for(int i=0; i<colors.Length; i++) { colors[i] = new Color32(0, 0, 0, 0); }
 	}
 
+	public void ResetVoxelSize(int in_new_resolution)
+	{
+		voxel_resolution = in_new_resolution;
+		marching_cube._gridSize = voxel_resolution;
+
+		colors = null;
+		colors = new Color32[voxel_resolution * voxel_resolution * voxel_resolution];
+	}
+
 	public void NoiseReduction()
 	{
 		for (int z = 1; z < voxel_resolution - 1; z++)
@@ -195,7 +204,7 @@ public class VoxelProcessor : MonoBehaviour {
 				}
 			}
 
-			info_output.info_text = "Processed Marching Cube: " + mesh_vertices.Count + " vertices";
+			info_output.info_text = "Voxel: " + voxel_resolution + " x " + voxel_resolution  + " / " + mesh_vertices.Count + " vertices";
 
 			is_update = false;
 		}

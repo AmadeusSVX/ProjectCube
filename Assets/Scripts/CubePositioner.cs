@@ -7,6 +7,7 @@ public class CubePositioner : MonoBehaviour {
 
 	public Transform dummy_cube;
 	public InfoOutput info_output;
+	public VoxelProcessor voxel_processor;
 
 	private Vector3 current_scale;
 	private Vector3 current_position;
@@ -38,6 +39,10 @@ public class CubePositioner : MonoBehaviour {
 	void OnTapEvent()
 	{
 		if (EventSystem.current.IsPointerOverGameObject())	return;
+
+		if (transform.localScale.x > 0.2f && voxel_processor.voxel_resolution != 128) { voxel_processor.ResetVoxelSize(128); }
+		if (transform.localScale.x <= 0.2f && voxel_processor.voxel_resolution != 64) { voxel_processor.ResetVoxelSize(64); }
+		voxel_processor.ClearVoxel();
 
 		// disable my own component
 		this.enabled = false;
